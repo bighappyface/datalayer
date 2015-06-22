@@ -4,5 +4,10 @@ dependencies[] = libraries
 package = Other
 core = 7.x
 
-files[] = tests/datalayer_test.test
-dependencies[] = libraries
+; Includes
+files[] = includes/datalayer.inc
+files[] = includes/datalayer.language.inc
+
+; Tests
+files[] = tests/datalayer.test
+files[] = tests/datalayer.language.test

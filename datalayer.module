@@ -4,6 +4,8 @@
  * Client-side data space.
  */
 
+define('DATALAYER_STATIC_CACHE_KEY', 'DATALAYER_STATIC_CACHE');
+
 /**
  * Implements hook_menu().
  */
@@ -70,13 +72,13 @@ function datalayer_preprocess_page(&$variables) {
   }
 
   // Expose user details (on configured URL patterns).
-  $expUserUrls = variable_get('datalayer_expose_user_details', array());
-  $expUserRoles = array_filter(variable_get('datalayer_expose_user_details_roles', array()));
-  $matchedRoles = array_intersect(array_keys($user->roles), $expUserRoles);
-  if ($expUserUrls && (count($expUserRoles) == 0 || count($matchedRoles))) {
+  $exp_user_urls = variable_get('datalayer_expose_user_details', array());
+  $exp_user_roles = array_filter(variable_get('datalayer_expose_user_details_roles', array()));
+  $matched_roles = array_intersect(array_keys($user->roles), $exp_user_roles);
+  if ($exp_user_urls && (count($exp_user_roles) == 0 || count($matched_roles))) {
     $path = current_path();
     $path_alias = drupal_lookup_path('alias', $path);
-    if (drupal_match_path($path, $expUserUrls) || drupal_match_path($path_alias, $expUserUrls)) {
+    if (drupal_match_path($path, $exp_user_urls) || drupal_match_path($path_alias, $exp_user_urls)) {
       datalayer_add(array(
         'userName' => $user->name,
         'userMail' => $user->mail,
@@ -257,7 +259,7 @@ function _datalayer_get_entity_data($obj, $type) {
 
       if ($type == 'taxonomy_term') {
         $output_data['entityTaxonomy'] = array(
-          $obj->vocabulary_machine_name => array($obj->tid => $obj->name)
+          $obj->vocabulary_machine_name => array($obj->tid => $obj->name),
         );
       }
       else {
@@ -300,19 +302,12 @@ function _datalayer_get_entity_data($obj, $type) {
  *   All data layer data added thus far.
  */
 function datalayer_add($data = array(), $overwrite = FALSE) {
-  $output_data = &drupal_static(__FUNCTION__, _datalayer_defaults());
-
-  // If we've been given data, add it to the output.
-  if (!empty($data)) {
-    if ($overwrite) {
-      $output_data = array_merge($output_data, $data);
-    }
-    else {
-      $output_data += $data;
-    }
+  $datalayer = &drupal_static(DATALAYER_STATIC_CACHE_KEY, new DataLayer());
+  $current_data = $datalayer->getData();
+  if (empty($current_data)) {
+    $datalayer->add(_datalayer_defaults());
   }
-
-  return $output_data;
+  return $datalayer->add($data, $overwrite);
 }
 
 
@@ -320,11 +315,10 @@ function datalayer_add($data = array(), $overwrite = FALSE) {
  * Defines Drupal-wide data layer defaults.
  */
 function _datalayer_defaults() {
-  global $language, $user;
-
-  return array(
-    'drupalLanguage' => $language->language,
-  );
+  global $language;
+  $datalayer = &drupal_static(DATALAYER_STATIC_CACHE_KEY, new DataLayer());
+  $datalayer->setLanguage($language);
+  return $datalayer->getDefaults();
 }
 
 
@@ -394,7 +388,7 @@ function _datalayer_get_entity_terms($entity_type, $bundle, $entity) {
 
   // Use very lightweight field info list to find relevant fields.
   foreach (field_info_field_map() as $field_name => $field_info) {
-    if ($field_info['type'] <> "taxonomy_term_reference") {
+    if ($field_info['type'] <> 'taxonomy_term_reference') {
       continue;
     }
     if (array_key_exists($entity_type, $field_info['bundles'])) {
