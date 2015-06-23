@@ -70,13 +70,13 @@ function datalayer_preprocess_page(&$variables) {
   }
 
   // Expose user details (on configured URL patterns).
-  $expUserUrls = variable_get('datalayer_expose_user_details', array());
-  $expUserRoles = array_filter(variable_get('datalayer_expose_user_details_roles', array()));
-  $matchedRoles = array_intersect(array_keys($user->roles), $expUserRoles);
-  if ($expUserUrls && (count($expUserRoles) == 0 || count($matchedRoles))) {
+  $exp_user_urls = variable_get('datalayer_expose_user_details', array());
+  $exp_user_roles = array_filter(variable_get('datalayer_expose_user_details_roles', array()));
+  $matched_roles = array_intersect(array_keys($user->roles), $exp_user_roles);
+  if ($exp_user_urls && (count($exp_user_roles) == 0 || count($matched_roles))) {
     $path = current_path();
     $path_alias = drupal_lookup_path('alias', $path);
-    if (drupal_match_path($path, $expUserUrls) || drupal_match_path($path_alias, $expUserUrls)) {
+    if (drupal_match_path($path, $exp_user_urls) || drupal_match_path($path_alias, $exp_user_urls)) {
       datalayer_add(array(
         'userName' => $user->name,
         'userMail' => $user->mail,
@@ -202,7 +202,6 @@ function datalayer_datalayer_meta() {
 function _datalayer_get_entity_data($obj, $type) {
   $output_data = &drupal_static(__FUNCTION__);
   if (empty($output_data)) {
-
     // Explicit additions and generalized properties...
     $entity_info = entity_get_info($type);
     $bundle = FALSE;
@@ -257,7 +256,7 @@ function _datalayer_get_entity_data($obj, $type) {
 
       if ($type == 'taxonomy_term') {
         $output_data['entityTaxonomy'] = array(
-          $obj->vocabulary_machine_name => array($obj->tid => $obj->name)
+          $obj->vocabulary_machine_name => array($obj->tid => $obj->name),
         );
       }
       else {
@@ -394,7 +393,7 @@ function _datalayer_get_entity_terms($entity_type, $bundle, $entity) {
 
   // Use very lightweight field info list to find relevant fields.
   foreach (field_info_field_map() as $field_name => $field_info) {
-    if ($field_info['type'] <> "taxonomy_term_reference") {
+    if ($field_info['type'] <> 'taxonomy_term_reference') {
       continue;
     }
     if (array_key_exists($entity_type, $field_info['bundles'])) {
