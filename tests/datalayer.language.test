@@ -1,0 +1,120 @@
+<?php
+/**
+ * @file
+ * Tests the functionality of the DataLayer module.
+ */
+
+/**
+ * Include DataLayer class to avoid registry lookup.
+ */
+require_once __DIR__ . '/../includes/datalayer.inc';
+
+/**
+ * DataLayer Unit Test Class.
+ */
+class DataLayerUnitTest extends DrupalUnitTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'DataLayer Unit Tests',
+      'description' => 'Unit tests for DataLayer classes and functions.',
+      'group' => 'DataLayer',
+    );
+  }
+
+  /**
+   * Test DataLayer Get Defaults.
+   */
+  public function testDataLayerGetDefaults() {
+    $datalayer = new DataLayer();
+
+    // With nothing set.
+    $this->assertEqual(
+      array(),
+      $datalayer->getDefaults()
+    );
+
+    // With language set.
+    $datalayer->setLanguage((object) array('language' => 'en'));
+    $this->assertEqual(
+      array('drupalLanguage' => 'en'),
+      $datalayer->getDefaults()
+    );
+  }
+
+  /**
+   * Test DataLayer add method adds data.
+   */
+  public function testDataLayerAddMethodAddsData() {
+    $datalayer = new DataLayer();
+
+    // With nothing set.
+    $this->assertEqual(
+      array(),
+      $datalayer->add()
+    );
+
+    // With data set.
+    $this->assertEqual(
+      array('hello' => 'world'),
+      $datalayer->add(array('hello' => 'world'))
+    );
+
+    // With more data set.
+    $this->assertEqual(
+      array('hello' => 'world', 'foo' => 'bar'),
+      $datalayer->add(array('foo' => 'bar'))
+    );
+  }
+
+  /**
+   * Test DataLayer add method overwrites data.
+   */
+  public function testDataLayerAddMethodOverwritesData() {
+    $datalayer = new DataLayer();
+
+    // Set initial data.
+    $this->assertEqual(
+      array('hello' => 'world'),
+      $datalayer->add(array('hello' => 'world'))
+    );
+
+    // With existing data and overwrite flag set to FALSE.
+    $this->assertEqual(
+      array('hello' => 'world'),
+      $datalayer->add(array('hello' => 'goodbye'))
+    );
+
+    // With existing data and overwrite flag set to TRUE.
+    $this->assertEqual(
+      array('hello' => 'goodbye'),
+      $datalayer->add(array('hello' => 'goodbye'), TRUE)
+    );
+  }
+
+  /**
+   * Test DataLayer add method overwrites data.
+   */
+  public function testDataLayerAddFunction() {
+    // With default data.
+    $this->assertEqual(
+      array('drupalLanguage' => 'en'),
+      datalayer_add()
+    );
+
+    // With additional data.
+    $this->assertEqual(
+      array('drupalLanguage' => 'en', 'hello' => 'world'),
+      datalayer_add(array('hello' => 'world'))
+    );
+
+    // With overwritten data.
+    $this->assertEqual(
+      array('drupalLanguage' => 'en', 'hello' => 'goodbye'),
+      datalayer_add(array('hello' => 'goodbye'), TRUE)
+    );
+  }
+}
