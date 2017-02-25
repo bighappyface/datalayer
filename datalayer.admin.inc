@@ -70,7 +70,7 @@ function datalayer_settings_form($form_state) {
       ),
     ),
     '#title' => '',
-    '#default_value' => variable_get('datalayer_global_entity_meta', 0),
+    '#default_value' => variable_get('datalayer_global_entity_meta', array()),
     '#options' => drupal_map_assoc($meta_data),
   );
 
@@ -89,7 +89,7 @@ function datalayer_settings_form($form_state) {
       ),
     ),
     '#title' => '',
-    '#default_value' => variable_get('datalayer_vocabs', 0),
+    '#default_value' => variable_get('datalayer_vocabs', array()),
     '#options' => $v_options,
   );
 
