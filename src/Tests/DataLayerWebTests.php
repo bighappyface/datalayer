@@ -1,12 +1,8 @@
 <?php
+
 namespace Drupal\datalayer\Tests;
 
 use Drupal\simpletest\WebTestBase;
-
-/**
- * @file
- * Tests the functionality of the DataLayer module.
- */
 
 class DataLayerWebTests extends WebTestBase {
 

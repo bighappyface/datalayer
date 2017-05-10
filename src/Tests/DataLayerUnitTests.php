@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\datalayer\Tests;
 
 use Drupal\simpletest\KernelTestBase;
@@ -11,11 +12,6 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
-
-/**
- * @file
- * Tests the functionality of the DataLayer module.
- */
 
 class DataLayerUnitTests extends KernelTestBase {
 

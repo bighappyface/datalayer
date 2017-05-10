@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\datalayer\Form\DatalayerSettingsForm.
- */
-
 namespace Drupal\datalayer\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
