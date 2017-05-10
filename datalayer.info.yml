@@ -11,3 +11,4 @@ version: '8.x-1.x-dev'
 core: '8.x'
 project: 'datalayer'
 datestamp: 1487739786
+configure: 'datalayer.settings_form'
