@@ -48,7 +48,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
 
     if (\Drupal::moduleHandler()->moduleExists('group')) {
       $config->set('group', $form_state->getValue('group'))
-        ->set('group_key', $form_state->getValue('group_key'))
+        ->set('group_label', $form_state->getValue('group_label'))
         ->save();
     }
 
@@ -320,11 +320,11 @@ class DatalayerSettingsForm extends ConfigFormBase {
 
     if (\Drupal::moduleHandler()->moduleExists('group')) {
       // Group label.
-      $group_key = $datalayer_settings->get('group_key');
-      $form['output']['group_key'] = [
+      $group_label = $datalayer_settings->get('group_label');
+      $form['output']['group_label'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Group key'),
-        '#default_value' => isset($group_key) ? $group_key : 'groupKey',
+        '#default_value' => isset($group_label) ? $group_label : 'groupKey',
         '#description' => $this->t('Key for the group.'),
       ];
     }

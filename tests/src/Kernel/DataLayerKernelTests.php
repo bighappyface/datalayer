@@ -1,9 +1,10 @@
 <?php
 
-namespace Drupal\datalayer\Tests;
+namespace Drupal\Tests\datalayer\Kernel;
 
-use Drupal\simpletest\KernelTestBase;
+use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\Language;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use Drupal\taxonomy\Entity\Term;
@@ -14,9 +15,11 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
 /**
- * Unit test cases for datalayer module.
+ * Kernel test cases for datalayer module.
+ *
+ * @group DataLayer
  */
-class DataLayerUnitTests extends KernelTestBase {
+class DataLayerKernelTests extends KernelTestBase {
 
   /**
    * Modules to install.
@@ -55,17 +58,6 @@ class DataLayerUnitTests extends KernelTestBase {
    * @var \Drupal\taxonomy\Term
    */
   protected $term;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'DataLayer Unit Tests',
-      'description' => 'Tests to ensure data makes it client-side.',
-      'group' => 'DataLayer',
-    ];
-  }
 
   /**
    * {@inheritdoc}
@@ -109,7 +101,11 @@ class DataLayerUnitTests extends KernelTestBase {
    */
   public function testDataLayerDefaults() {
     $this->assertEqual(
-      ['drupalLanguage' => $this->defaultLanguageData()['id'], 'drupalCountry' => $this->config('system.date')->get('country.default')],
+      [
+        'drupalLanguage' => Language::$defaultValues['id'],
+        'drupalCountry' => $this->config('system.date')->get('country.default'),
+        'siteName' => $this->config('system.site')->get('name'),
+      ],
       _datalayer_defaults()
     );
   }
@@ -288,7 +284,7 @@ class DataLayerUnitTests extends KernelTestBase {
       'entityType' => 'node',
       'entityBundle' => 'article',
       'entityId' => '1',
-      'entityLabel' => 'My Article',
+      'entityTitle' => 'My Article',
       'entityLangcode' => 'und',
       'entityVid' => '1',
       'entityName' => 'admin',

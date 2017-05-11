@@ -1,13 +1,15 @@
 <?php
 
-namespace Drupal\datalayer\Tests;
+namespace Drupal\Tests\datalayer\Functional;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
- * Web test cases for datalayer module.
+ * Functional test cases for datalayer module.
+ *
+ * @group DataLayer
  */
-class DataLayerWebTests extends WebTestBase {
+class DataLayerFunctionalTests extends BrowserTestBase {
 
   /**
    * Modules to install.
@@ -15,17 +17,6 @@ class DataLayerWebTests extends WebTestBase {
    * @var array
    */
   public static $modules = ['node', 'datalayer'];
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'DataLayer',
-      'description' => 'Tests to ensure data makes it client-side.',
-      'group' => 'DataLayer',
-    ];
-  }
 
   /**
    * {@inheritdoc}
@@ -50,7 +41,8 @@ class DataLayerWebTests extends WebTestBase {
    */
   public function testDataLayerVariableOutputByName() {
     $output = $this->drupalGet('node');
-    $this->assertRaw('dataLayer = [{');
+    $assert = $this->assertSession();
+    $assert->pageTextContains('dataLayer = [{');
   }
 
   /**
@@ -58,7 +50,8 @@ class DataLayerWebTests extends WebTestBase {
    */
   public function testDataLayerJsLanguageSettings() {
     $output = $this->drupalGet('node');
-    $this->assertRaw('"dataLayer":{"defaultLang"');
+    $assert = $this->assertSession();
+    $assert->pageTextContains('"dataLayer":{"defaultLang"');
   }
 
 }
