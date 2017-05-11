@@ -4,10 +4,11 @@ namespace Drupal\datalayer\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\Core\Url;
 
+/**
+ * Defines a form that configures datalayer module settings.
+ */
 class DatalayerSettingsForm extends ConfigFormBase {
 
   /**
@@ -90,6 +91,9 @@ class DatalayerSettingsForm extends ConfigFormBase {
     return ['datalayer.settings'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Setup vocabs.
     $vocabs = Vocabulary::loadMultiple();
@@ -116,10 +120,10 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#states' => [
         'enabled' => [
           ':input[name="add_page_meta"]' => [
-            'checked' => TRUE
-            ]
-          ]
+            'checked' => TRUE,
+          ],
         ],
+      ],
       '#title' => $this->t('Include taxonomy terms'),
       '#default_value' => $datalayer_settings->get('output_terms'),
     ];
@@ -134,7 +138,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Include "data layer helper" library'),
       '#default_value' => $datalayer_settings->get('lib_helper'),
       '#description' => $this->t('Provides the ability to process messages passed to the dataLayer. See: <a href=":helper">data-layer-helper</a> on GitHub.', [
-        ':helper' => 'https://github.com/google/data-layer-helper'
+        ':helper' => 'https://github.com/google/data-layer-helper',
       ]),
     ];
     if (\Drupal::moduleHandler()->moduleExists('group')) {
@@ -156,10 +160,10 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#states' => [
         'enabled' => [
           ':input[name="add_page_meta"]' => [
-            'checked' => TRUE
-            ]
-          ]
+            'checked' => TRUE,
+          ],
         ],
+      ],
       '#title' => '',
       '#default_value' => $datalayer_settings->get('entity_meta'),
       '#options' => array_combine($meta_data, $meta_data),
@@ -212,10 +216,10 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#states' => [
         'enabled' => [
           ':input[name="output_terms"]' => [
-            'checked' => TRUE
-            ]
-          ]
+            'checked' => TRUE,
+          ],
         ],
+      ],
       '#title' => '',
       '#default_value' => $datalayer_settings->get('vocabs'),
       '#options' => $v_options,
@@ -234,7 +238,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Pages that should expose active user details to the dataLayer. Leaving empty will expose nothing.'),
     ];
 
-    $user_roles =  user_roles(TRUE);
+    $user_roles = user_roles(TRUE);
     $role_options = [];
     foreach ($user_roles as $id => $role) {
       $role_options[$id] = $role->label();
@@ -260,7 +264,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Define keys used in the datalayer output. Keys for field values are configurable via the field edit form.'),
     ];
 
-    // Entity title
+    // Entity title.
     $entity_title = $datalayer_settings->get('entity_title');
     $form['output']['entity_title'] = [
       '#type' => 'textfield',
@@ -296,7 +300,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Key for the identifier of an entity, e.g. nid, uid, or tid.'),
     ];
 
-    // drupalLanguage.
+    // Drupal language.
     $drupal_lang = $datalayer_settings->get('drupal_language');
     $form['output']['drupal_language'] = [
       '#type' => 'textfield',
@@ -305,7 +309,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Key for the language of the site.'),
     ];
 
-    // drupalCountry.
+    // Drupal country.
     $drupal_country = $datalayer_settings->get('drupal_country');
     $form['output']['drupal_country'] = [
       '#type' => 'textfield',
@@ -334,7 +338,7 @@ class DatalayerSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Key for the site name value.'),
     ];
 
-    // find an replace.
+    // Find a replacement.
     $key_replacements = $datalayer_settings->get('key_replacements');
     $form['output']['key_replacements'] = [
       '#type' => 'textarea',

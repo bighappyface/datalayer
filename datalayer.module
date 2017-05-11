@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Client-side data space.
@@ -7,10 +8,11 @@
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-Use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContentType;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_menu().
@@ -28,7 +30,6 @@ function datalayer_menu() {
 
   return $items;
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter() for 'field_config_edit_form'.
@@ -51,7 +52,6 @@ function datalayer_form_field_config_form_alter(&$form, FormStateInterface $form
     ];
   }
 }
-
 
 /**
  * Implements hook_libraries_info().
@@ -80,7 +80,6 @@ function datalayer_libraries_info() {
   return $libraries;
 }
 
-
 /**
  * Add data for output.
  */
@@ -107,7 +106,6 @@ function datalayer_get_data_from_page() {
   return $datalayer;
 }
 
-
 /**
  * Implements hook_page_attachments().
  *
@@ -126,9 +124,9 @@ function datalayer_page_attachments(array &$attachments) {
     [
       '#type' => 'html_tag',
       '#tag' => 'script',
-      '#value' => 'var dataLayer = ['. Json::encode($datalayer_attachment) .'];',
+      '#value' => 'var dataLayer = [' . Json::encode($datalayer_attachment) . '];',
     ],
-    'datalayers-js'
+    'datalayers-js',
   ];
 
   // Include data-layer-helper library.
@@ -158,7 +156,6 @@ function datalayer_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'datalayer/behaviors';
 }
 
-
 /**
  * Collects up meta data for output.
  *
@@ -181,7 +178,6 @@ function _datalayer_collect_meta_properties() {
   return $properties;
 }
 
-
 /**
  * Implements hook_datalayer_meta().
  *
@@ -199,11 +195,11 @@ function datalayer_datalayer_meta() {
   ];
 }
 
-
 /**
  * Return all the page meta data.
  *
  * @return array
+ *   The page data.
  */
 function datalayer_get_page_data() {
   $entity = _datalayer_menu_get_any_object();
@@ -219,12 +215,13 @@ function datalayer_get_page_data() {
  * Return all user data based on configured URL patterns.
  *
  * @return array
+ *   The user data.
  */
 function datalayer_get_user_data() {
   $user = \Drupal::currentUser();
   $user_data = [];
   if (!$user->isAnonymous()) {
-    $user = \Drupal\user\Entity\User::load($user->id());
+    $user = User::load($user->id());
     $datalayer_settings = \Drupal::config('datalayer.settings');
     $roles = $datalayer_settings->get('expose_user_details_roles');
     $exp_user_urls = $datalayer_settings->get('expose_user_details');
@@ -254,7 +251,6 @@ function datalayer_get_user_data() {
 
   return $user_data;
 }
-
 
 /**
  * Collect entity data for output and altering.
@@ -326,7 +322,7 @@ function _datalayer_get_entity_data($entity) {
       }
     }
 
-    // For entities with an owner/author, get the username
+    // For entities with an owner/author, get the username.
     if ((empty($selected_properties) || array_key_exists('name', $properties))
       && !isset($output_data['entityName']) && is_object($entity->uid)) {
       $output_data['entityName'] = $entity->uid->entity->name->getString();
@@ -335,8 +331,8 @@ function _datalayer_get_entity_data($entity) {
     // Output group name.
     if ($datalayer_settings->get('group')) {
       if (\Drupal::moduleHandler()->moduleExists('group')) {
-        if ($entity instanceof \Drupal\Core\Entity\EntityInterface && ($entity->getEntityType() == 'node')) {
-          $groupName = getEntityGroup($entity);
+        if ($entity instanceof EntityInterface && ($entity->getEntityType() == 'node')) {
+          $groupName = datalayer_get_entity_group($entity);
           if (!is_null($groupName)) {
             $output_data[$datalayer_settings->get('group_label')] = $groupName->label();
           }
@@ -412,7 +408,6 @@ function _datalayer_get_entity_data($entity) {
   return $output_data;
 }
 
-
 /**
  * Allow adding to the data layer easy on the fly, similar to drupal_add_js().
  *
@@ -426,7 +421,7 @@ function _datalayer_get_entity_data($entity) {
  * @return array
  *   All data layer data added thus far.
  */
-function datalayer_add($data = [], $overwrite = FALSE) {
+function datalayer_add(array $data = [], $overwrite = FALSE) {
   $output_data = &drupal_static(__FUNCTION__, _datalayer_defaults());
 
   // If we've been given data, add it to the output.
@@ -458,17 +453,16 @@ function _datalayer_defaults() {
   ];
 }
 
-
 /**
  * Agnosticly get the current menu object.
  *
- * return object
+ * @return object
  *   Entity object of current menu callback page.
  */
 function _datalayer_menu_get_any_object() {
   // Figure out if a content entity is being viewed.
   $route_match = \Drupal::routeMatch();
-  foreach($route_match->getParameters() as $parameter) {
+  foreach ($route_match->getParameters() as $parameter) {
     if ($parameter instanceof ContentEntityInterface) {
       return $parameter;
     }
@@ -476,7 +470,6 @@ function _datalayer_menu_get_any_object() {
 
   return NULL;
 }
-
 
 /**
  * Fetch all taxonomy terms from an entity.
@@ -533,7 +526,8 @@ function _datalayer_get_field_values($entity) {
           $fields[$field_info->getThirdPartySetting('datalayer', 'label')] =
               _datalayer_field_get_value($field_item, $field_type);
         }
-      } else {
+      }
+      else {
         foreach ($entity->{$field_name} as $field_item) {
           $subitems = _datalayer_field_get_value($field_item, $field_type);
           if (!is_null($subitems)) {
@@ -550,12 +544,12 @@ function _datalayer_get_field_values($entity) {
 }
 
 /**
- * Get an array of values from a field object
+ * Get an array of values from a field object.
  *
- * @param object $field
+ * @param object $field_item
  *   Field containing the values.
  * @param string $field_type
- *   The type of field the value belongs to
+ *   The type of field the value belongs to.
  *
  * @return array
  *   Numeric array of values.
@@ -566,6 +560,7 @@ function _datalayer_field_get_value($field_item, $field_type) {
     case 'entity_reference':
       $value = $field_item->getValue() + ['target_name' => $field_item->entity->name->getString()];
       break;
+
     case 'metatag':
       $field = $field_item->getValue();
       $values = unserialize($field['value']);
@@ -573,6 +568,7 @@ function _datalayer_field_get_value($field_item, $field_type) {
         $value[$key] = $thisvalue;
       }
       break;
+
     default:
       $value = $field_item->getValue();
       if (count($value) == 1) {
@@ -585,13 +581,13 @@ function _datalayer_field_get_value($field_item, $field_type) {
 }
 
 /**
- * Implements hook_google_tag_snippets_alter()
+ * Implements hook_google_tag_snippets_alter().
  */
 function datalayer_google_tag_snippets_alter(&$snippets) {
   $config = \Drupal::config('google_tag.settings');
   $data_layer = $config->get('data_layer');
   $data_layer = trim(json_encode($data_layer), '"');
-  // concat the dataLayer module variable with the google_tag dataLayer array
+  // Concat the dataLayer module variable with the google_tag dataLayer array.
   $snippets['data_layer'] = preg_replace("/($data_layer = )(\[.*?\])(;.*$)/",
       '$1dataLayer.concat($2)$3', $snippets['data_layer']);
 }
@@ -605,7 +601,7 @@ function datalayer_google_tag_snippets_alter(&$snippets) {
  * @return null|\Drupal\group\Entity\GroupInterface
  *   Return the Group if found, else NULL.
  */
-function getEntityGroup(EntityInterface $entity) {
+function datalayer_get_entity_group(EntityInterface $entity) {
   // Load all the group content for this node.
   $group_content_types = GroupContentType::loadByContentPluginId("group_node:{$entity->bundle()}");
   $group_contents = \Drupal::entityTypeManager()

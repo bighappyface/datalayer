@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Documentation for the Data Layer module.
@@ -32,7 +33,7 @@ function hook_datalayer_meta() {
  * @param array $properties
  *   Data layer properties to output on entiity pages.
  */
-function hook_datalayer_meta_alter($properties) {
+function hook_datalayer_meta_alter(array $properties) {
   // EXAMPLE:
   // Remove author uid if anonymous or admin.
   if ($properties['uid'] == 0 || $properties['uid'] == 1) {
@@ -46,7 +47,7 @@ function hook_datalayer_meta_alter($properties) {
  * @param array $data_layer
  *   GTM data layer data for the current page.
  */
-function hook_datalayer_alter(&$data_layer) {
+function hook_datalayer_alter(array &$data_layer) {
   // EXAMPLE:
   // Set the "site" variable to return in lowercase.
   $data_layer['site'] = strtolower($data_layer['site']);

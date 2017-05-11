@@ -4,6 +4,9 @@ namespace Drupal\datalayer\Tests;
 
 use Drupal\simpletest\WebTestBase;
 
+/**
+ * Web test cases for datalayer module.
+ */
 class DataLayerWebTests extends WebTestBase {
 
   /**
@@ -42,6 +45,7 @@ class DataLayerWebTests extends WebTestBase {
    * Test DataLayer variable output by name.
    *
    * This will be helpful when/if the variable name can be customized.
+   *
    * @see https://www.drupal.org/node/2300577
    */
   public function testDataLayerVariableOutputByName() {
@@ -56,4 +60,5 @@ class DataLayerWebTests extends WebTestBase {
     $output = $this->drupalGet('node');
     $this->assertRaw('"dataLayer":{"defaultLang"');
   }
+
 }

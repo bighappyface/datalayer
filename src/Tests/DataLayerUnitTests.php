@@ -13,6 +13,9 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
+/**
+ * Unit test cases for datalayer module.
+ */
 class DataLayerUnitTests extends KernelTestBase {
 
   /**
@@ -20,7 +23,15 @@ class DataLayerUnitTests extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['datalayer', 'system', 'user', 'node', 'taxonomy', 'field', 'text'];
+  public static $modules = [
+    'datalayer',
+    'system',
+    'user',
+    'node',
+    'taxonomy',
+    'field',
+    'text',
+  ];
 
   /**
    * A test user.
@@ -70,7 +81,7 @@ class DataLayerUnitTests extends KernelTestBase {
   }
 
   /**
-   * Create field definitions for taxonomy term
+   * Create field definitions for taxonomy term.
    */
   public function setupMockFieldConfig() {
     NodeType::create([
