@@ -21,9 +21,9 @@
 function hook_datalayer_meta() {
   // EXAMPLE:
   // Add your own entity property to output.
-  return array(
+  return [
     'some_property',
-  );
+  ];
 }
 
 /**

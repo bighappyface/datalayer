@@ -49,11 +49,11 @@ class DataLayerUnitTests extends KernelTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'DataLayer Unit Tests',
       'description' => 'Tests to ensure data makes it client-side.',
       'group' => 'DataLayer',
-    );
+    ];
   }
 
   /**
@@ -98,7 +98,7 @@ class DataLayerUnitTests extends KernelTestBase {
    */
   public function testDataLayerDefaults() {
     $this->assertEqual(
-      array('drupalLanguage' => $this->defaultLanguageData()['id'], 'drupalCountry' => $this->config('system.date')->get('country.default')),
+      ['drupalLanguage' => $this->defaultLanguageData()['id'], 'drupalCountry' => $this->config('system.date')->get('country.default')],
       _datalayer_defaults()
     );
   }
@@ -109,8 +109,8 @@ class DataLayerUnitTests extends KernelTestBase {
   public function testDataLayerAddWillAddData() {
     $this->setupEmptyDataLayer();
     $this->assertEqual(
-      array('foo' => 'bar'),
-      datalayer_add(array('foo' => 'bar'))
+      ['foo' => 'bar'],
+      datalayer_add(['foo' => 'bar'])
     );
   }
 
@@ -119,10 +119,10 @@ class DataLayerUnitTests extends KernelTestBase {
    */
   public function testDataLayerAddDoesNotOverwriteByDefault() {
     $this->setupEmptyDataLayer();
-    datalayer_add(array('foo' => 'bar'));
+    datalayer_add(['foo' => 'bar']);
     $this->assertEqual(
-      array('foo' => 'bar'),
-      datalayer_add(array('foo' => 'baz'))
+      ['foo' => 'bar'],
+      datalayer_add(['foo' => 'baz'])
     );
   }
 
@@ -131,10 +131,10 @@ class DataLayerUnitTests extends KernelTestBase {
    */
   public function testDataLayerAddWillOverwriteWithFlag() {
     $this->setupEmptyDataLayer();
-    datalayer_add(array('foo' => 'bar'));
+    datalayer_add(['foo' => 'bar']);
     $this->assertEqual(
-      array('foo' => 'baz'),
-      datalayer_add(array('foo' => 'baz'), TRUE)
+      ['foo' => 'baz'],
+      datalayer_add(['foo' => 'baz'], TRUE)
     );
   }
 
@@ -164,7 +164,7 @@ class DataLayerUnitTests extends KernelTestBase {
   public function testDataLayerGetEntityTermsReturnsEmptyArray() {
     $this->setupMockNode();
     $terms = _datalayer_get_entity_terms($this->node);
-    $this->assertEqual(array(), $terms);
+    $this->assertEqual([], $terms);
   }
 
   /**
@@ -173,7 +173,7 @@ class DataLayerUnitTests extends KernelTestBase {
   public function testDataLayerGetEntityTermsReturnsTermArray() {
     $this->setupMockNodeWithTerm();
     $terms = _datalayer_get_entity_terms($this->node);
-    $this->assertEqual(array('tags' => array(1 => 'someTag')), $terms);
+    $this->assertEqual(['tags' => [1 => 'someTag']], $terms);
   }
 
   /**
@@ -193,12 +193,12 @@ class DataLayerUnitTests extends KernelTestBase {
    * Setup user.
    */
   public function setupMockUser() {
-    $data = array(
+    $data = [
       'uid'      => 1,
       'name'     => 'admin',
       'password' => 'password',
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
-    );
+    ];
 
     $this->user = User::create($data);
     $this->user->save();
@@ -208,7 +208,7 @@ class DataLayerUnitTests extends KernelTestBase {
    * Setup empty datalayer.
    */
   public function setupEmptyDataLayer() {
-    $data = &drupal_static('datalayer_add', array());
+    $data = &drupal_static('datalayer_add', []);
   }
 
   /**
@@ -217,7 +217,7 @@ class DataLayerUnitTests extends KernelTestBase {
   public function setupMockNode() {
     $this->setupMockUser();
     // Create a node.
-    $data = array(
+    $data = [
       'uid'      => $this->user->id(),
       'name'     => 'admin',
       'type'     => 'article',
@@ -228,7 +228,7 @@ class DataLayerUnitTests extends KernelTestBase {
       'vid' => 1,
       'type' => 'article',
       'created' => '1435019805',
-    );
+    ];
     $this->node = Node::create($data);
     $this->node->save();
   }
@@ -239,7 +239,7 @@ class DataLayerUnitTests extends KernelTestBase {
   public function setupMockNodeWithTerm() {
     $this->setupMockNode();
     $this->setupMockEntityTerm();
-    $this->node->set('field_tags', array('target_id' => $this->term->id()));
+    $this->node->set('field_tags', ['target_id' => $this->term->id()]);
   }
 
   /**
@@ -249,8 +249,8 @@ class DataLayerUnitTests extends KernelTestBase {
     $this->setupMockNode();
     $request = &drupal_static(__FUNCTION__);
     if (!$request) {
-      $request = \Drupal::request()->create('/node/1', 'GET', array('node' => $this->node));
-      $request->attributes->set(RouteObjectInterface::ROUTE_OBJECT, new Route('/node/{node}', array('node' => 1)));
+      $request = \Drupal::request()->create('/node/1', 'GET', ['node' => $this->node]);
+      $request->attributes->set(RouteObjectInterface::ROUTE_OBJECT, new Route('/node/{node}', ['node' => 1]));
       $request->attributes->set(RouteObjectInterface::ROUTE_NAME, 'entity.node.canonical');
       $request->attributes->set('node', $this->node);
       $this->container->get('request_stack')->push($request);
@@ -261,11 +261,11 @@ class DataLayerUnitTests extends KernelTestBase {
    * Setup Mock Entity Terms.
    */
   public function setupMockEntityTerm() {
-    $this->term = Term::create(array(
+    $this->term = Term::create([
       'name' => 'someTag',
       'vid' => 'tags',
       'tid' => 1,
-    ));
+    ]);
     $this->term->save();
   }
 
@@ -273,7 +273,7 @@ class DataLayerUnitTests extends KernelTestBase {
    * Get expected entity data array.
    */
   public function getExpectedEntityDataArray() {
-    return array(
+    return [
       'entityType' => 'node',
       'entityBundle' => 'article',
       'entityId' => '1',
@@ -284,12 +284,12 @@ class DataLayerUnitTests extends KernelTestBase {
       'entityUid' => '1',
       'entityCreated' => '1435019805',
       'entityStatus' => '1',
-      'entityTaxonomy' => array(
-        'tags' => array(
+      'entityTaxonomy' => [
+        'tags' => [
           1 => 'someTag',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
   }
 
 }

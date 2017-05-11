@@ -16,15 +16,15 @@ use Drupal\group\Entity\GroupContentType;
  * Implements hook_menu().
  */
 function datalayer_menu() {
-  $items['admin/config/search/datalayer'] = array(
+  $items['admin/config/search/datalayer'] = [
     'title' => 'Data Layer',
     'description' => 'Output page meta data for client-side use.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('datalayer_settings_form'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['datalayer_settings_form'],
+    'access arguments' => ['administer site configuration'],
     'type' => MENU_NORMAL_ITEM,
     'file' => 'datalayer.admin.inc',
-  );
+  ];
 
   return $items;
 }
@@ -59,24 +59,24 @@ function datalayer_form_field_config_form_alter(&$form, FormStateInterface $form
  * Defines external libraries.
  */
 function datalayer_libraries_info() {
-  $libraries = array();
+  $libraries = [];
 
-  $libraries['data-layer-helper'] = array(
+  $libraries['data-layer-helper'] = [
     'name' => 'Data Layer Helper',
     'version' => '0.1.0',
     'vendor url' => 'https://github.com/google/data-layer-helper',
     'download url' => 'https://github.com/google/data-layer-helper/archive/master.zip',
-    'files' => array(
-      'js' => array(
-        'data-layer-helper.js' => array(
+    'files' => [
+      'js' => [
+        'data-layer-helper.js' => [
           'type' => 'file',
           'group' => JS_LIBRARY,
           'every_page' => TRUE,
-        ),
-      ),
-    ),
+        ],
+      ],
+    ],
     'error message' => t('Data layer helper library missing.'),
-  );
+  ];
   return $libraries;
 }
 
@@ -99,7 +99,7 @@ function datalayer_get_data_from_page() {
   }
 
   // Always output active uid.
-  $datalayer = datalayer_add(array('userUid' => $user->id()));
+  $datalayer = datalayer_add(['userUid' => $user->id()]);
 
   // Allow modules to alter data with hook_datalayer_alter().
   \Drupal::moduleHandler()->alter('datalayer', $datalayer);
@@ -170,7 +170,7 @@ function _datalayer_collect_meta_properties() {
   $properties = &drupal_static(__FUNCTION__);
   if (!isset($properties)) {
 
-    $properties = array();
+    $properties = [];
     foreach (\Drupal::moduleHandler()->getImplementations('datalayer_meta') as $module) {
       // Call modules implementing datalayer_meta() and combine results.
       $properties = array_merge($properties, \Drupal::moduleHandler()->invoke($module, 'datalayer_meta'));
@@ -188,7 +188,7 @@ function _datalayer_collect_meta_properties() {
  * Defines default meta data.
  */
 function datalayer_datalayer_meta() {
-  return array(
+  return [
     'langcode',
     'vid',
     'name',
@@ -196,7 +196,7 @@ function datalayer_datalayer_meta() {
     'created',
     'status',
     'roles',
-  );
+  ];
 }
 
 
@@ -212,7 +212,7 @@ function datalayer_get_page_data() {
     return _datalayer_get_entity_data($entity);
   }
 
-  return array();
+  return [];
 }
 
 /**
@@ -386,9 +386,9 @@ function _datalayer_get_entity_data($entity) {
       $vocabs = $datalayer_settings->get('vocabs');
       $selected_vocabs = $vocabs ? array_filter($vocabs) : NULL;
       if ($type == 'taxonomy_term') {
-        $output_data['entityTaxonomy'] = array(
-          $entity->vid->getString() => array($entity->tid->getString() => $entity->name->getString()),
-        );
+        $output_data['entityTaxonomy'] = [
+          $entity->vid->getString() => [$entity->tid->getString() => $entity->name->getString()],
+        ];
       }
       else {
         // Meta data on content.
@@ -426,7 +426,7 @@ function _datalayer_get_entity_data($entity) {
  * @return array
  *   All data layer data added thus far.
  */
-function datalayer_add($data = array(), $overwrite = FALSE) {
+function datalayer_add($data = [], $overwrite = FALSE) {
   $output_data = &drupal_static(__FUNCTION__, _datalayer_defaults());
 
   // If we've been given data, add it to the output.
@@ -490,7 +490,7 @@ function _datalayer_menu_get_any_object() {
  *   Array with tids of entity.
  */
 function _datalayer_get_entity_terms($entity) {
-  $terms = array();
+  $terms = [];
   // Use very lightweight field info list to find relevant fields.
   foreach ($entity->getFieldDefinitions() as $field_name => $field_info) {
     if (($field_info->getType() != "entity_reference") ||
@@ -561,7 +561,7 @@ function _datalayer_get_field_values($entity) {
  *   Numeric array of values.
  */
 function _datalayer_field_get_value($field_item, $field_type) {
-  $value = array();
+  $value = [];
   switch ($field_type) {
     case 'entity_reference':
       $value = $field_item->getValue() + ['target_name' => $field_item->entity->name->getString()];

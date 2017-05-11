@@ -17,11 +17,11 @@ class DataLayerWebTests extends WebTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'DataLayer',
       'description' => 'Tests to ensure data makes it client-side.',
       'group' => 'DataLayer',
-    );
+    ];
   }
 
   /**
@@ -29,11 +29,11 @@ class DataLayerWebTests extends WebTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $admin_user = $this->drupalCreateUser(array(
+    $admin_user = $this->drupalCreateUser([
       'access administration pages',
       'administer nodes',
       'administer site configuration',
-    ));
+    ]);
     $this->drupalLogin($admin_user);
 
   }
